@@ -91,33 +91,11 @@ public class TicketServlet extends HttpServlet
         if(ticket == null)
             return;
 
-        PrintWriter writer = this.writeHeader(response);
+        request.setAttribute("ticketId", idString);
+        request.setAttribute("ticket", ticket);
 
-        writer.append("<h2>Ticket #").append(idString)
-              .append(": ").append(ticket.getSubject()).append("</h2>\r\n");
-        writer.append("<i>Customer Name - ").append(ticket.getCustomerName())
-              .append("</i><br/><br/>\r\n");
-        writer.append(ticket.getBody()).append("<br/><br/>\r\n");
-
-        if(ticket.getNumberOfAttachments() > 0)
-        {
-            writer.append("Attachments: ");
-            int i = 0;
-            for(Attachment attachment : ticket.getAttachments())
-            {
-                if(i++ > 0)
-                    writer.append(", ");
-                writer.append("<a href=\"tickets?action=download&ticketId=")
-                      .append(idString).append("&attachment=")
-                      .append(attachment.getName()).append("\">")
-                      .append(attachment.getName()).append("</a>");
-            }
-            writer.append("<br/><br/>\r\n");
-        }
-
-        writer.append("<a href=\"tickets\">Return to list tickets</a>\r\n");
-
-        this.writeFooter(writer);
+        request.getRequestDispatcher("/WEB-INF/jsp/view/viewTicket.jsp")
+                .forward(request, response);
     }
 
     private void downloadAttachment(HttpServletRequest request,
