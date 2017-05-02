@@ -69,4 +69,52 @@ public class TicketServlet extends HttpServlet
                 break;
         }
     }
+
+    private Ticket getTicket(String idString, HttpServletResponse response)
+            throws ServletException, IOException
+    {
+        if(idString == null || idString.length() == 0)
+        {
+            response.sendRedirect("tickets");
+            return null;
+        }
+
+        try
+        {
+            Ticket ticket = this.ticketDatabase.get(Integer.parseInt(idString));
+            if(ticket == null)
+            {
+                response.sendRedirect("tickets");
+                return null;
+            }
+            return ticket;
+        }
+        catch(Exception e)
+        {
+            response.sendRedirect("tickets");
+            return null;
+        }
+    }
+
+    private PrintWriter writeHeader(HttpServletResponse response)
+            throws ServletException, IOException
+    {
+        response.setContentType("text/html");
+        response.setCharacterEncoding("UTF-8");
+
+        PrintWriter writer = response.getWriter();
+        writer.append("<!DOCTYPE html>\r\n")
+              .append("<html>\r\n")
+              .append("    <head>\r\n")
+              .append("        <title>Customer Support</title>\r\n")
+              .append("    </head>\r\n")
+              .append("    <body>\r\n");
+
+        return writer;
+    }
+
+    private void writeFooter(PrintWriter writer)
+    {
+        writer.append("    </body>\r\n").append("</html>\r\n");
+    }
 }
