@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <modelVersion>4.0.0</modelVersion>
-    <name>Customer Support Appilcation</name>
+    <name>Customer Support Application</name>
     <groupId>com.wrox</groupId>
     <artifactId>customer-support</artifactId>
     <version>1.0</version>
