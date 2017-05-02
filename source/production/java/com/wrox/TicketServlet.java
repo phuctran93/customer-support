@@ -11,7 +11,6 @@ import javax.servlet.http.Part;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -75,11 +74,12 @@ public class TicketServlet extends HttpServlet
         }
     }
 
-    private void showTicketForm(HttpServletRequest request, HttpServletResponse response)
+    private void showTicketForm(HttpServletRequest request,
+                                HttpServletResponse response)
             throws ServletException, IOException
     {
         request.getRequestDispatcher("/WEB-INF/jsp/view/ticketForm.jsp")
-                .forward(request, response);
+               .forward(request, response);
     }
 
     private void viewTicket(HttpServletRequest request,
@@ -95,7 +95,7 @@ public class TicketServlet extends HttpServlet
         request.setAttribute("ticket", ticket);
 
         request.getRequestDispatcher("/WEB-INF/jsp/view/viewTicket.jsp")
-                .forward(request, response);
+               .forward(request, response);
     }
 
     private void downloadAttachment(HttpServletRequest request,
@@ -129,10 +129,12 @@ public class TicketServlet extends HttpServlet
         stream.write(attachment.getContents());
     }
 
-    private void listTickets(HttpServletRequest request, HttpServletResponse response)
+    private void listTickets(HttpServletRequest request,
+                             HttpServletResponse response)
             throws ServletException, IOException
     {
         request.setAttribute("ticketDatabase", this.ticketDatabase);
+
         request.getRequestDispatcher("/WEB-INF/jsp/view/listTickets.jsp")
                 .forward(request, response);
     }
@@ -209,27 +211,5 @@ public class TicketServlet extends HttpServlet
             response.sendRedirect("tickets");
             return null;
         }
-    }
-
-    private PrintWriter writeHeader(HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        response.setContentType("text/html");
-        response.setCharacterEncoding("UTF-8");
-
-        PrintWriter writer = response.getWriter();
-        writer.append("<!DOCTYPE html>\r\n")
-              .append("<html>\r\n")
-              .append("    <head>\r\n")
-              .append("        <title>Customer Support</title>\r\n")
-              .append("    </head>\r\n")
-              .append("    <body>\r\n");
-
-        return writer;
-    }
-
-    private void writeFooter(PrintWriter writer)
-    {
-        writer.append("    </body>\r\n").append("</html>\r\n");
     }
 }
