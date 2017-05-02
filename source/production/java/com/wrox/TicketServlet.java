@@ -51,7 +51,7 @@ public class TicketServlet extends HttpServlet
                 break;
             case "list":
             default:
-                this.listTickets(response);
+                this.listTickets(request, response);
                 break;
         }
     }
@@ -129,32 +129,12 @@ public class TicketServlet extends HttpServlet
         stream.write(attachment.getContents());
     }
 
-    private void listTickets(HttpServletResponse response)
+    private void listTickets(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        PrintWriter writer = this.writeHeader(response);
-
-        writer.append("<h2>Tickets</h2>\r\n");
-        writer.append("<a href=\"tickets?action=create\">Create Ticket")
-              .append("</a><br/><br/>\r\n");
-
-        if(this.ticketDatabase.size() == 0)
-            writer.append("<i>There are no tickets in the system.</i>\r\n");
-        else
-        {
-            for(int id : this.ticketDatabase.keySet())
-            {
-                String idString = Integer.toString(id);
-                Ticket ticket = this.ticketDatabase.get(id);
-                writer.append("Ticket #").append(idString)
-                      .append(": <a href=\"tickets?action=view&ticketId=")
-                      .append(idString).append("\">").append(ticket.getSubject())
-                      .append("</a> (customer: ").append(ticket.getCustomerName())
-                      .append(")<br/>\r\n");
-            }
-        }
-
-        this.writeFooter(writer);
+        request.setAttribute("ticketDatabase", this.ticketDatabase);
+        request.getRequestDispatcher("/WEB-INF/jsp/view/listTickets.jsp")
+                .forward(request, response);
     }
 
     private void createTicket(HttpServletRequest request,
