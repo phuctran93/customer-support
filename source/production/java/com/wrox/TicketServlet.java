@@ -41,7 +41,7 @@ public class TicketServlet extends HttpServlet
         switch(action)
         {
             case "create":
-                this.showTicketForm(response);
+                this.showTicketForm(request, response);
                 break;
             case "view":
                 this.viewTicket(request, response);
@@ -75,29 +75,11 @@ public class TicketServlet extends HttpServlet
         }
     }
 
-    private void showTicketForm(HttpServletResponse response)
+    private void showTicketForm(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
-        PrintWriter writer = this.writeHeader(response);
-
-        writer.append("<h2>Create a Ticket</h2>\r\n");
-        writer.append("<form method=\"POST\" action=\"tickets\" ")
-              .append("enctype=\"multipart/form-data\">\r\n");
-        writer.append("<input type=\"hidden\" name=\"action\" ")
-              .append("value=\"create\"/>\r\n");
-        writer.append("Your Name<br/>\r\n");
-        writer.append("<input type=\"text\" name=\"customerName\"/><br/><br/>\r\n");
-        writer.append("Subject<br/>\r\n");
-        writer.append("<input type=\"text\" name=\"subject\"/><br/><br/>\r\n");
-        writer.append("Body<br/>\r\n");
-        writer.append("<textarea name=\"body\" rows=\"5\" cols=\"30\">")
-              .append("</textarea><br/><br/>\r\n");
-        writer.append("<b>Attachments</b><br/>\r\n");
-        writer.append("<input type=\"file\" name=\"file1\"/><br/><br/>\r\n");
-        writer.append("<input type=\"submit\" value=\"Submit\"/>\r\n");
-        writer.append("</form>\r\n");
-
-        this.writeFooter(writer);
+        request.getRequestDispatcher("/WEB-INF/jsp/view/ticketForm.jsp")
+                .forward(request, response);
     }
 
     private void viewTicket(HttpServletRequest request,
