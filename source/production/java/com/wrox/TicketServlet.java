@@ -192,6 +192,54 @@ public class TicketServlet extends HttpServlet
         this.writeFooter(writer);
     }
 
+    private void createTicket(HttpServletRequest request,
+                              HttpServletResponse response)
+            throws ServletException, IOException
+    {
+        Ticket ticket = new Ticket();
+        ticket.setCustomerName(request.getParameter("customerName"));
+        ticket.setSubject(request.getParameter("subject"));
+        ticket.setBody(request.getParameter("body"));
+
+        Part filePart = request.getPart("file1");
+        if(filePart != null && filePart.getSize() > 0)
+        {
+            Attachment attachment = this.processAttachment(filePart);
+            if(attachment != null)
+                ticket.addAttachment(attachment);
+        }
+
+        int id;
+        synchronized(this)
+        {
+            id = this.TICKET_ID_SEQUENCE++;
+            this.ticketDatabase.put(id, ticket);
+        }
+
+        response.sendRedirect("tickets?action=view&ticketId=" + id);
+    }
+
+    private Attachment processAttachment(Part filePart)
+            throws IOException
+    {
+        InputStream inputStream = filePart.getInputStream();
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        int read;
+        final byte[] bytes = new byte[1024];
+
+        while((read = inputStream.read(bytes)) != -1)
+        {
+            outputStream.write(bytes, 0, read);
+        }
+
+        Attachment attachment = new Attachment();
+        attachment.setName(filePart.getSubmittedFileName());
+        attachment.setContents(outputStream.toByteArray());
+
+        return attachment;
+    }
+
     private Ticket getTicket(String idString, HttpServletResponse response)
             throws ServletException, IOException
     {
