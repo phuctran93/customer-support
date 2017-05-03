@@ -1,4 +1,4 @@
-<%@ page session="false" import="java.util.Map" %>
+<%@ page import="java.util.Map" %>
 <%
     @SuppressWarnings("unchecked")
     Map<Integer, Ticket> ticketDatabase =
