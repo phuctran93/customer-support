@@ -7,7 +7,7 @@
     <name>Customer Support Application</name>
     <groupId>com.wrox</groupId>
     <artifactId>customer-support</artifactId>
-    <version>7.0</version>
+    <version>8.0</version>
     <packaging>war</packaging>
 
     <properties>
