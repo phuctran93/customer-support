@@ -4,10 +4,6 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.LinkedHashMap;
@@ -30,50 +26,6 @@ public class TicketController
     private volatile long TICKET_ID_SEQUENCE = 1;
 
     private Map<Long, Ticket> ticketDatabase = new LinkedHashMap<>();
-
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        log.debug("GET request received.");
-        String action = request.getParameter("action");
-        if(action == null)
-            action = "list";
-        switch(action)
-        {
-            case "create":
-//                this.showTicketForm(request, response);
-                break;
-            case "view":
-//                this.viewTicket(request, response);
-                break;
-            case "download":
-//                this.downloadAttachment(request, response);
-                break;
-            case "list":
-            default:
-//                this.listTickets(request, response);
-                break;
-        }
-    }
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        log.debug("POST request received.");
-        String action = request.getParameter("action");
-        if(action == null)
-            action = "list";
-        switch(action)
-        {
-            case "create":
-//                this.createTicket(request, response);
-                break;
-            case "list":
-            default:
-                response.sendRedirect("tickets");
-                break;
-        }
-    }
 
     @RequestMapping(value = "view/{ticketId}", method = RequestMethod.GET)
     public ModelAndView view(Map<String, Object> model,
