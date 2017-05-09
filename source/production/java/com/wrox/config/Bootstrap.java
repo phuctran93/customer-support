@@ -1,7 +1,7 @@
-package com.wrox.chat.config;
+package com.wrox.config;
 
-import com.wrox.AuthenticationFilter;
-import com.wrox.LoggingFilter;
+import com.wrox.site.AuthenticationFilter;
+import com.wrox.site.LoggingFilter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletContext;

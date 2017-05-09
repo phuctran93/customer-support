@@ -1,4 +1,4 @@
-package com.wrox;
+package com.wrox.site;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;

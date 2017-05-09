@@ -1,6 +1,6 @@
-package com.wrox;
+package com.wrox.site;
 
-import com.wrox.chat.ChatEndpoint;
+import com.wrox.site.chat.ChatEndpoint;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

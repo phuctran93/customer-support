@@ -1,4 +1,4 @@
-package com.wrox;
+package com.wrox.site;
 
 import java.time.Instant;
 import java.util.Collection;

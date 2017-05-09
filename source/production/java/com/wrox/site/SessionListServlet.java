@@ -1,4 +1,4 @@
-package com.wrox;
+package com.wrox.site;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;

@@ -1,4 +1,4 @@
-package com.wrox.chat;
+package com.wrox.site.chat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;

@@ -1,4 +1,4 @@
-package com.wrox.chat.config;
+package com.wrox.config;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

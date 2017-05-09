@@ -1,4 +1,4 @@
-package com.wrox;
+package com.wrox.site;
 
 public final class TimeUtils
 {

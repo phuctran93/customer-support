@@ -1,4 +1,4 @@
-package com.wrox.chat;
+package com.wrox.site.chat;
 
 import java.time.OffsetDateTime;
 

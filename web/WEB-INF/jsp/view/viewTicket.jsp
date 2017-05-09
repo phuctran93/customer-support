@@ -1,5 +1,5 @@
 <%--@elvariable id="ticketId" type="java.lang.String"--%>
-<%--@elvariable id="ticket" type="com.wrox.Ticket"--%>
+<%--@elvariable id="ticket" type="com.wrox.site.Ticket"--%>
 <template:basic htmlTitle="${ticket.subject}"
                 bodyTitle="Ticket #${ticketId}: ${ticket.subject}">
     <i>Customer Name - <c:out value="${ticket.customerName}" /><br />

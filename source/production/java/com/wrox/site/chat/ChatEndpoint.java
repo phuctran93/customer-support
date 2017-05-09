@@ -1,4 +1,4 @@
-package com.wrox.chat;
+package com.wrox.site.chat;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

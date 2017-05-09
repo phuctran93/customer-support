@@ -1,4 +1,4 @@
-<%--@elvariable id="ticketDatabase" type="java.util.Map<Integer, com.wrox.Ticket>"--%>
+<%--@elvariable id="ticketDatabase" type="java.util.Map<Integer, com.wrox.site.Ticket>"--%>
 <template:basic htmlTitle="Tickets" bodyTitle="Tickets">
     <c:choose>
         <c:when test="${fn:length(ticketDatabase) == 0}">
