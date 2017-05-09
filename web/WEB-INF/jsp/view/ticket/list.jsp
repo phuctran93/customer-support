@@ -6,10 +6,8 @@
         </c:when>
         <c:otherwise>
             <c:forEach items="${ticketDatabase}" var="entry">
-                Ticket ${entry.key}: <a href="<c:url value="/tickets">
-                    <c:param name="action" value="view" />
-                    <c:param name="ticketId" value="${entry.key}" />
-                </c:url>">
+                Ticket ${entry.key}:
+                <a href="<c:url value="/ticket/view/${entry.key}" />">
                 <c:out value="${wrox:abbreviateString(entry.value.subject, 60)}" />
                 </a><br />
                 <c:out value="${entry.value.customerName}" /> created ticket

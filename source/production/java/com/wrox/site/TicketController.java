@@ -52,7 +52,7 @@ public class TicketController
                 break;
             case "list":
             default:
-                this.listTickets(request, response);
+//                this.listTickets(request, response);
                 break;
         }
     }
@@ -130,15 +130,13 @@ public class TicketController
         log.exit();
     }
 
-    private void listTickets(HttpServletRequest request,
-                             HttpServletResponse response)
-            throws ServletException, IOException
+    @RequestMapping(value = {"", "list"}, method = RequestMethod.GET)
+    public String list(Map<String, Object> model)
     {
         log.debug("Listing tickets.");
-        request.setAttribute("ticketDatabase", this.ticketDatabase);
+        model.put("ticketDatabase", this.ticketDatabase);
 
-        request.getRequestDispatcher("/WEB-INF/jsp/view/list.jsp")
-                .forward(request, response);
+        return "ticket/list";
     }
 
     private void createTicket(HttpServletRequest request,
