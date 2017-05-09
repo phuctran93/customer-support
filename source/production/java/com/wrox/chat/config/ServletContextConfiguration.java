@@ -17,6 +17,7 @@ import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -66,5 +67,15 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
         ));
         jsonConverter.setObjectMapper(this.mapper);
         converters.add(jsonConverter);
+    }
+
+    @Override
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer)
+    {
+        configurer.favorPathExtension(true).favorParameter(false)
+                .parameterName("mediaType").ignoreAcceptHeader(false)
+                .useJaf(false).defaultContentType(MediaType.APPLICATION_XML)
+                .mediaType("xml", MediaType.APPLICATION_XML)
+                .mediaType("json", MediaType.APPLICATION_JSON);
     }
 }
