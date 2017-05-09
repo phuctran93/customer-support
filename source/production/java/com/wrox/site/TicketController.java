@@ -6,13 +6,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -51,7 +47,7 @@ public class TicketController
 //                this.viewTicket(request, response);
                 break;
             case "download":
-                this.downloadAttachment(request, response);
+//                this.downloadAttachment(request, response);
                 break;
             case "list":
             default:
@@ -91,38 +87,26 @@ public class TicketController
         return new ModelAndView("ticket/view");
     }
 
-    private void downloadAttachment(HttpServletRequest request,
-                                    HttpServletResponse response)
-            throws ServletException, IOException
+    @RequestMapping(
+            value = "/{ticketId}/attachment/{attachment:.+}",
+            method = RequestMethod.GET
+    )
+    public View download(@PathVariable("ticketId") long ticketId,
+            @PathVariable("attachment") String name)
     {
-        String idString = request.getParameter("ticketId");
-        log.entry(idString);
-        Ticket ticket = this.getTicket(idString, response);
+        Ticket ticket = this.ticketDatabase.get(ticketId);
         if(ticket == null)
-            return;
-
-        String name = request.getParameter("attachment");
-        if(name == null)
-        {
-            response.sendRedirect("tickets?action=view&ticketId=" + idString);
-            return;
-        }
+            return this.getListRedirectView();
 
         Attachment attachment = ticket.getAttachment(name);
         if(attachment == null)
         {
-            log.info("Requested attachment {} not found on ticket {}.", name, idString);
-            response.sendRedirect("tickets?action=view&ticketId=" + idString);
-            return;
+            log.info("Requested attachment {} not found on ticket {}.", name, ticket);
+            return this.getListRedirectView();
         }
 
-        response.setHeader("Content-Disposition",
-                "attachment; filename=" + attachment.getName());
-        response.setContentType("application/octet-stream");
-
-        ServletOutputStream stream = response.getOutputStream();
-        stream.write(attachment.getContents());
-        log.exit();
+        return new DownloadingView(attachment.getName(),
+                                   attachment.getMimeContentType(), attachment.getContents());
     }
 
     @RequestMapping(value = {"", "list"}, method = RequestMethod.GET)
@@ -166,33 +150,6 @@ public class TicketController
         this.ticketDatabase.put(ticket.getId(), ticket);
 
         return new RedirectView("/ticket/view/" + ticket.getId(), true, false);
-    }
-
-    private Ticket getTicket(String idString, HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        log.entry(idString);
-        if(idString == null || idString.length() == 0)
-        {
-            response.sendRedirect("tickets");
-            return null;
-        }
-
-        try
-        {
-            Ticket ticket = this.ticketDatabase.get(Integer.parseInt(idString));
-            if(ticket == null)
-            {
-                response.sendRedirect("tickets");
-                return log.exit(null);
-            }
-            return log.exit(ticket);
-        }
-        catch(Exception e)
-        {
-            response.sendRedirect("tickets");
-            return log.exit(null);
-        }
     }
 
     private synchronized long getNextTicketId()
