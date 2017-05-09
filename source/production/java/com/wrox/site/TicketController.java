@@ -11,10 +11,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpSession;
+import javax.inject.Inject;
 import java.io.IOException;
-import java.time.Instant;
-import java.util.LinkedHashMap;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
 
@@ -24,15 +23,13 @@ public class TicketController
 {
     private static final Logger log = LogManager.getLogger();
 
-    private volatile long TICKET_ID_SEQUENCE = 1;
-
-    private Map<Long, Ticket> ticketDatabase = new LinkedHashMap<>();
+    @Inject TicketService ticketService;
 
     @RequestMapping(value = {"", "list"}, method = RequestMethod.GET)
     public String list(Map<String, Object> model)
     {
         log.debug("Listing tickets.");
-        model.put("ticketDatabase", this.ticketDatabase);
+        model.put("tickets", this.ticketService.getAllTickets());
 
         return "ticket/list";
     }
@@ -41,7 +38,7 @@ public class TicketController
     public ModelAndView view(Map<String, Object> model,
                              @PathVariable("ticketId") long ticketId)
     {
-        Ticket ticket = this.ticketDatabase.get(ticketId);
+        Ticket ticket = this.ticketService.getTicket(ticketId);
         if(ticket == null)
             return this.getListRedirectModelAndView();
         model.put("ticketId", Long.toString(ticketId));
@@ -56,7 +53,7 @@ public class TicketController
     public View download(@PathVariable("ticketId") long ticketId,
                          @PathVariable("attachment") String name)
     {
-        Ticket ticket = this.ticketDatabase.get(ticketId);
+        Ticket ticket = this.ticketService.getTicket(ticketId);
         if(ticket == null)
             return this.getListRedirectView();
 
@@ -79,14 +76,12 @@ public class TicketController
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public View create(HttpSession session, Form form) throws IOException
+    public View create(Principal principal, Form form) throws IOException
     {
         Ticket ticket = new Ticket();
-        ticket.setId(this.getNextTicketId());
-        ticket.setCustomerName((String)session.getAttribute("username"));
+        ticket.setCustomerName(principal.getName());
         ticket.setSubject(form.getSubject());
         ticket.setBody(form.getBody());
-        ticket.setDateCreated(Instant.now());
 
         for(MultipartFile filePart : form.getAttachments())
         {
@@ -100,7 +95,7 @@ public class TicketController
                 ticket.addAttachment(attachment);
         }
 
-        this.ticketDatabase.put(ticket.getId(), ticket);
+        this.ticketService.save(ticket);
 
         return new RedirectView("/ticket/view/" + ticket.getId(), true, false);
     }
@@ -113,11 +108,6 @@ public class TicketController
     private View getListRedirectView()
     {
         return new RedirectView("/ticket/list", true, false);
-    }
-
-    private synchronized long getNextTicketId()
-    {
-        return this.TICKET_ID_SEQUENCE++;
     }
 
     public static class Form
