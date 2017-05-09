@@ -17,18 +17,12 @@ import java.io.InputStream;
 import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@WebServlet(
-        name = "ticketServlet",
-        urlPatterns = {"/tickets"},
-        loadOnStartup = 1
-)
-@MultipartConfig(
-        fileSizeThreshold = 5_242_880, //5MB
-        maxFileSize = 20_971_520L, //20MB
-        maxRequestSize = 41_943_040L //40MB
-)
-public class TicketServlet extends HttpServlet
+@Controller
+@RequestMapping("ticket")
+public class TicketController
 {
     private static final Logger log = LogManager.getLogger();
 
@@ -36,7 +30,6 @@ public class TicketServlet extends HttpServlet
 
     private Map<Integer, Ticket> ticketDatabase = new LinkedHashMap<>();
 
-    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
@@ -62,7 +55,6 @@ public class TicketServlet extends HttpServlet
         }
     }
 
-    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
     {
