@@ -2,6 +2,7 @@ package com.wrox.config;
 
 import com.wrox.site.AuthenticationFilter;
 import com.wrox.site.LoggingFilter;
+import com.wrox.site.SessionListener;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -25,6 +26,7 @@ public class Bootstrap implements WebApplicationInitializer
                 new AnnotationConfigWebApplicationContext();
         rootContext.register(RootContextConfiguration.class);
         container.addListener(new ContextLoaderListener(rootContext));
+        container.addListener(SessionListener.class);
 
         AnnotationConfigWebApplicationContext servletContext =
                 new AnnotationConfigWebApplicationContext();
