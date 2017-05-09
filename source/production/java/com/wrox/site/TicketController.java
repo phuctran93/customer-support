@@ -45,7 +45,7 @@ public class TicketController
         switch(action)
         {
             case "create":
-                this.showTicketForm(request, response);
+//                this.showTicketForm(request, response);
                 break;
             case "view":
 //                this.viewTicket(request, response);
@@ -77,14 +77,6 @@ public class TicketController
                 response.sendRedirect("tickets");
                 break;
         }
-    }
-
-    private void showTicketForm(HttpServletRequest request,
-                                HttpServletResponse response)
-            throws ServletException, IOException
-    {
-        request.getRequestDispatcher("/WEB-INF/jsp/view/add.jsp")
-               .forward(request, response);
     }
 
     @RequestMapping(value = "view/{ticketId}", method = RequestMethod.GET)
@@ -142,6 +134,13 @@ public class TicketController
         return "ticket/list";
     }
 
+    @RequestMapping(value = "create", method = RequestMethod.GET)
+    public String create(Map<String, Object> model)
+    {
+        model.put("ticketForm", new Form());
+        return "ticket/add";
+    }
+
     @RequestMapping(value = "create", method = RequestMethod.POST)
     public View create(HttpSession session, Form form) throws IOException
     {
@@ -167,28 +166,6 @@ public class TicketController
         this.ticketDatabase.put(ticket.getId(), ticket);
 
         return new RedirectView("/ticket/view/" + ticket.getId(), true, false);
-    }
-
-    private Attachment processAttachment(Part filePart)
-            throws IOException
-    {
-        log.entry(filePart);
-        InputStream inputStream = filePart.getInputStream();
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        int read;
-        final byte[] bytes = new byte[1024];
-
-        while((read = inputStream.read(bytes)) != -1)
-        {
-            outputStream.write(bytes, 0, read);
-        }
-
-        Attachment attachment = new Attachment();
-        attachment.setName(filePart.getSubmittedFileName());
-        attachment.setContents(outputStream.toByteArray());
-
-        return log.exit(attachment);
     }
 
     private Ticket getTicket(String idString, HttpServletResponse response)
