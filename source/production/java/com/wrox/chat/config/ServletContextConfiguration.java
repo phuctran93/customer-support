@@ -18,6 +18,8 @@ import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.RequestToViewNameTranslator;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
@@ -101,5 +103,11 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
     public RequestToViewNameTranslator viewNameTranslator()
     {
         return new DefaultRequestToViewNameTranslator();
+    }
+
+    @Bean
+    public MultipartResolver multipartResolver()
+    {
+        return new StandardServletMultipartResolver();
     }
 }
