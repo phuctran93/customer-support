@@ -5,9 +5,6 @@ import org.apache.logging.log4j.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
-import javax.servlet.annotation.MultipartConfig;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -18,7 +15,12 @@ import java.time.Instant;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.View;
+import org.springframework.web.servlet.view.RedirectView;
 
 @Controller
 @RequestMapping("ticket")
@@ -43,7 +45,7 @@ public class TicketController
                 this.showTicketForm(request, response);
                 break;
             case "view":
-                this.viewTicket(request, response);
+//                this.viewTicket(request, response);
                 break;
             case "download":
                 this.downloadAttachment(request, response);
@@ -82,22 +84,16 @@ public class TicketController
                .forward(request, response);
     }
 
-    private void viewTicket(HttpServletRequest request,
-                            HttpServletResponse response)
-            throws ServletException, IOException
+    @RequestMapping(value = "view/{ticketId}", method = RequestMethod.GET)
+    public ModelAndView view(Map<String, Object> model,
+            @PathVariable("ticketId") long ticketId)
     {
-        String idString = request.getParameter("ticketId");
-        log.entry(idString);
-        Ticket ticket = this.getTicket(idString, response);
+        Ticket ticket = this.ticketDatabase.get(ticketId);
         if(ticket == null)
-            return;
-
-        request.setAttribute("ticketId", idString);
-        request.setAttribute("ticket", ticket);
-
-        request.getRequestDispatcher("/WEB-INF/jsp/view/viewTicket.jsp")
-               .forward(request, response);
-        log.exit();
+            return this.getListRedirectModelAndView();
+        model.put("ticketId", Long.toString(ticketId));
+        model.put("ticket", ticket);
+        return new ModelAndView("ticket/view");
     }
 
     private void downloadAttachment(HttpServletRequest request,
@@ -141,7 +137,7 @@ public class TicketController
         log.debug("Listing tickets.");
         request.setAttribute("ticketDatabase", this.ticketDatabase);
 
-        request.getRequestDispatcher("/WEB-INF/jsp/view/listTickets.jsp")
+        request.getRequestDispatcher("/WEB-INF/jsp/view/list.jsp")
                 .forward(request, response);
     }
 
@@ -225,5 +221,15 @@ public class TicketController
             response.sendRedirect("tickets");
             return log.exit(null);
         }
+    }
+
+    private ModelAndView getListRedirectModelAndView()
+    {
+        return new ModelAndView(this.getListRedirectView());
+    }
+
+    private View getListRedirectView()
+    {
+        return new RedirectView("/ticket/list", true, false);
     }
 }
