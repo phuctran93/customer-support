@@ -19,4 +19,22 @@ import org.springframework.stereotype.Controller;
 )
 public class RootContextConfiguration
 {
+
+    @Bean
+    public ObjectMapper objectMapper()
+    {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE, false);
+        return mapper;
+    }
+
+    @Bean
+    public Jaxb2Marshaller jaxb2Marshaller()
+    {
+        Jaxb2Marshaller marshaller = new Jaxb2Marshaller();
+        marshaller.setPackagesToScan("com.wrox.site");
+        return marshaller;
+    }
 }
