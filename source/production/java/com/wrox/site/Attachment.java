@@ -4,6 +4,8 @@ public class Attachment
 {
     private String name;
 
+    private String mimeContentType;
+
     private byte[] contents;
 
     public String getName()
@@ -16,6 +18,15 @@ public class Attachment
         this.name = name;
     }
 
+    public String getMimeContentType()
+    {
+        return mimeContentType;
+    }
+
+    public void setMimeContentType(String mimeContentType)
+    {
+        this.mimeContentType = mimeContentType;
+    }
     public byte[] getContents()
     {
         return contents;

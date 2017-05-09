@@ -7,6 +7,8 @@ import java.util.Map;
 
 public class Ticket
 {
+    private long id;
+
     private String customerName;
 
     private String subject;
@@ -16,6 +18,16 @@ public class Ticket
     private Instant dateCreated;
 
     private Map<String, Attachment> attachments = new LinkedHashMap<>();
+
+    public long getId()
+    {
+        return id;
+    }
+
+    public void setId(long id)
+    {
+        this.id = id;
+    }
 
     public String getCustomerName()
     {
