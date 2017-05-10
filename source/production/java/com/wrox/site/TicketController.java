@@ -1,13 +1,7 @@
 package com.wrox.site;
 
-import java.util.List;
-import javax.servlet.http.HttpSession;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import java.io.IOException;
-import java.time.Instant;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,21 +11,34 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.security.Principal;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping("ticket")
 public class TicketController
 {
     private static final Logger log = LogManager.getLogger();
 
-    private volatile long TICKET_ID_SEQUENCE = 1;
+    @Inject TicketService ticketService;
 
-    private Map<Long, Ticket> ticketDatabase = new LinkedHashMap<>();
+    @RequestMapping(value = {"", "list"}, method = RequestMethod.GET)
+    public String list(Map<String, Object> model)
+    {
+        log.debug("Listing tickets.");
+        model.put("tickets", this.ticketService.getAllTickets());
+
+        return "ticket/list";
+    }
 
     @RequestMapping(value = "view/{ticketId}", method = RequestMethod.GET)
     public ModelAndView view(Map<String, Object> model,
-            @PathVariable("ticketId") long ticketId)
+                             @PathVariable("ticketId") long ticketId)
     {
-        Ticket ticket = this.ticketDatabase.get(ticketId);
+        Ticket ticket = this.ticketService.getTicket(ticketId);
         if(ticket == null)
             return this.getListRedirectModelAndView();
         model.put("ticketId", Long.toString(ticketId));
@@ -44,9 +51,9 @@ public class TicketController
             method = RequestMethod.GET
     )
     public View download(@PathVariable("ticketId") long ticketId,
-            @PathVariable("attachment") String name)
+                         @PathVariable("attachment") String name)
     {
-        Ticket ticket = this.ticketDatabase.get(ticketId);
+        Ticket ticket = this.ticketService.getTicket(ticketId);
         if(ticket == null)
             return this.getListRedirectView();
 
@@ -58,16 +65,7 @@ public class TicketController
         }
 
         return new DownloadingView(attachment.getName(),
-                                   attachment.getMimeContentType(), attachment.getContents());
-    }
-
-    @RequestMapping(value = {"", "list"}, method = RequestMethod.GET)
-    public String list(Map<String, Object> model)
-    {
-        log.debug("Listing tickets.");
-        model.put("ticketDatabase", this.ticketDatabase);
-
-        return "ticket/list";
+                attachment.getMimeContentType(), attachment.getContents());
     }
 
     @RequestMapping(value = "create", method = RequestMethod.GET)
@@ -78,14 +76,12 @@ public class TicketController
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public View create(HttpSession session, Form form) throws IOException
+    public View create(Principal principal, Form form) throws IOException
     {
         Ticket ticket = new Ticket();
-        ticket.setId(this.getNextTicketId());
-        ticket.setCustomerName((String)session.getAttribute("username"));
+        ticket.setCustomerName(principal.getName());
         ticket.setSubject(form.getSubject());
         ticket.setBody(form.getBody());
-        ticket.setDateCreated(Instant.now());
 
         for(MultipartFile filePart : form.getAttachments())
         {
@@ -99,14 +95,9 @@ public class TicketController
                 ticket.addAttachment(attachment);
         }
 
-        this.ticketDatabase.put(ticket.getId(), ticket);
+        this.ticketService.save(ticket);
 
         return new RedirectView("/ticket/view/" + ticket.getId(), true, false);
-    }
-
-    private synchronized long getNextTicketId()
-    {
-        return this.TICKET_ID_SEQUENCE++;
     }
 
     private ModelAndView getListRedirectModelAndView()
@@ -118,7 +109,6 @@ public class TicketController
     {
         return new RedirectView("/ticket/list", true, false);
     }
-
 
     public static class Form
     {

@@ -2,22 +2,21 @@ package com.wrox.config;
 
 import com.wrox.site.AuthenticationFilter;
 import com.wrox.site.LoggingFilter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.MultipartConfigElement;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
+import com.wrox.site.SessionListener;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-/**
- * Created by phuctran93 on 5/9/2017.
- */
+import javax.servlet.FilterRegistration;
+import javax.servlet.MultipartConfigElement;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration;
+
+@SuppressWarnings("unused")
 public class Bootstrap implements WebApplicationInitializer
 {
-
     @Override
     public void onStartup(ServletContext container) throws ServletException
     {
@@ -27,6 +26,7 @@ public class Bootstrap implements WebApplicationInitializer
                 new AnnotationConfigWebApplicationContext();
         rootContext.register(RootContextConfiguration.class);
         container.addListener(new ContextLoaderListener(rootContext));
+        container.addListener(SessionListener.class);
 
         AnnotationConfigWebApplicationContext servletContext =
                 new AnnotationConfigWebApplicationContext();
@@ -44,12 +44,13 @@ public class Bootstrap implements WebApplicationInitializer
                 "loggingFilter", new LoggingFilter()
         );
         registration.addMappingForUrlPatterns(null, false, "/*");
+
         registration = container.addFilter(
                 "authenticationFilter", new AuthenticationFilter()
         );
         registration.addMappingForUrlPatterns(
-                null,
-                false,
-                "/ticket", "/ticket/*", "/chat","/chat/*","/session","/session/*");
+                null, false, "/ticket", "/ticket/*", "/chat", "/chat/*",
+                "/session", "/session/*"
+        );
     }
 }

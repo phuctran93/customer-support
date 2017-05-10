@@ -1,9 +1,6 @@
 package com.wrox.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.util.Arrays;
-import java.util.List;
-import javax.inject.Inject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +26,10 @@ import org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-/**
- * Created by phuctran93 on 5/9/2017.
- */
+import javax.inject.Inject;
+import java.util.Arrays;
+import java.util.List;
+
 @Configuration
 @EnableWebMvc
 @ComponentScan(
@@ -41,17 +39,14 @@ import org.springframework.web.servlet.view.JstlView;
 )
 public class ServletContextConfiguration extends WebMvcConfigurerAdapter
 {
-
-    @Inject
-    private ObjectMapper mapper;
-    @Inject
-    private Marshaller marshaller;
-    @Inject
-    private Unmarshaller unmarshaller;
+    @Inject ObjectMapper objectMapper;
+    @Inject Marshaller marshaller;
+    @Inject Unmarshaller unmarshaller;
 
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
-    {
+    public void configureMessageConverters(
+            List<HttpMessageConverter<?>> converters
+    ) {
         converters.add(new ByteArrayHttpMessageConverter());
         converters.add(new StringHttpMessageConverter());
         converters.add(new FormHttpMessageConverter());
@@ -73,12 +68,13 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
                 new MediaType("application", "json"),
                 new MediaType("text", "json")
         ));
-        jsonConverter.setObjectMapper(this.mapper);
+        jsonConverter.setObjectMapper(this.objectMapper);
         converters.add(jsonConverter);
     }
 
     @Override
-    public void configureContentNegotiation(ContentNegotiationConfigurer configurer)
+    public void configureContentNegotiation(
+            ContentNegotiationConfigurer configurer)
     {
         configurer.favorPathExtension(true).favorParameter(false)
                 .parameterName("mediaType").ignoreAcceptHeader(false)

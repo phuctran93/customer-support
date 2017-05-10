@@ -9,8 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.security.Principal;
 import java.util.UUID;
 
 public class LoggingFilter implements Filter
@@ -19,23 +20,23 @@ public class LoggingFilter implements Filter
     public void doFilter(ServletRequest request, ServletResponse response,
                          FilterChain chain) throws IOException, ServletException
     {
-        boolean clear = false;
-        if(!ThreadContext.containsKey("id")) {
-            clear = true;
-            ThreadContext.put("id", UUID.randomUUID().toString());
-            HttpSession session = ((HttpServletRequest)request).getSession(false);
-            if(session != null)
-                ThreadContext.put("username",
-                        (String)session.getAttribute("username"));
-        }
+        String id = UUID.randomUUID().toString();
+        ThreadContext.put("id", id);
+        Principal principal = UserPrincipal.getPrincipal(
+                ((HttpServletRequest)request).getSession(false)
+        );
+        if(principal != null)
+            ThreadContext.put("username", principal.getName());
 
-        try {
+        try
+        {
+            ((HttpServletResponse)response).setHeader("X-Wrox-Request-Id", id);
             chain.doFilter(request, response);
-        } finally {
-            if(clear)
-                ThreadContext.clearAll();
         }
-
+        finally
+        {
+            ThreadContext.clearAll();
+        }
     }
 
     @Override
