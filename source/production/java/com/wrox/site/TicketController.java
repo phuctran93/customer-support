@@ -1,8 +1,10 @@
 package com.wrox.site;
 
+import com.wrox.validation.NotBlank;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,6 +14,9 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.security.Principal;
 import java.util.List;
@@ -71,13 +76,18 @@ public class TicketController
     @RequestMapping(value = "create", method = RequestMethod.GET)
     public String create(Map<String, Object> model)
     {
-        model.put("ticketForm", new Form());
+        model.put("ticketForm", new TicketForm());
         return "ticket/add";
     }
 
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public View create(Principal principal, Form form) throws IOException
+    public ModelAndView create(Principal principal, @Valid TicketForm form,
+                               Errors errors, Map<String, Object> model)
+            throws IOException
     {
+        if(errors.hasErrors())
+            return new ModelAndView("ticket/add");
+
         Ticket ticket = new Ticket();
         ticket.setCustomerName(principal.getName());
         ticket.setSubject(form.getSubject());
@@ -95,9 +105,19 @@ public class TicketController
                 ticket.addAttachment(attachment);
         }
 
-        this.ticketService.save(ticket);
+        try
+        {
+            this.ticketService.save(ticket);
+        }
+        catch(ConstraintViolationException e)
+        {
+            model.put("validationErrors", e.getConstraintViolations());
+            return new ModelAndView("ticket/add");
+        }
 
-        return new RedirectView("/ticket/view/" + ticket.getId(), true, false);
+        return new ModelAndView(new RedirectView(
+                "/ticket/view/" + ticket.getId(), true, false
+        ));
     }
 
     private ModelAndView getListRedirectModelAndView()
@@ -110,10 +130,13 @@ public class TicketController
         return new RedirectView("/ticket/list", true, false);
     }
 
-    public static class Form
+    public static class TicketForm
     {
+        @NotBlank(message = "{validate.ticket.subject}")
         private String subject;
+        @NotBlank(message = "{validate.ticket.body}")
         private String body;
+        @NotNull(message = "{validate.ticket.attachments}")
         private List<MultipartFile> attachments;
 
         public String getSubject()
