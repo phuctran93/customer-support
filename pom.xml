@@ -7,7 +7,7 @@
     <name>Customer Support Application</name>
     <groupId>com.wrox</groupId>
     <artifactId>customer-support</artifactId>
-    <version>5.0</version>
+    <version>6.0</version>
     <packaging>war</packaging>
 
     <properties>
@@ -60,6 +60,13 @@
             <artifactId>javax.el-api</artifactId>
             <version>3.0.0</version>
             <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>3.1</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 
