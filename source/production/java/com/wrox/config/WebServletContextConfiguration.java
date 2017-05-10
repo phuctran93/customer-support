@@ -43,7 +43,7 @@ import java.util.List;
         useDefaultFilters = false,
         includeFilters = @ComponentScan.Filter(Controller.class)
 )
-public class ServletContextConfiguration extends WebMvcConfigurerAdapter
+public class WebServletContextConfiguration extends WebMvcConfigurerAdapter
 {
     @Inject ObjectMapper objectMapper;
     @Inject Marshaller marshaller;

@@ -30,7 +30,7 @@ public class Bootstrap implements WebApplicationInitializer
 
         AnnotationConfigWebApplicationContext servletContext =
                 new AnnotationConfigWebApplicationContext();
-        servletContext.register(ServletContextConfiguration.class);
+        servletContext.register(WebServletContextConfiguration.class);
         ServletRegistration.Dynamic dispatcher = container.addServlet(
                 "springDispatcher", new DispatcherServlet(servletContext)
         );
@@ -39,6 +39,15 @@ public class Bootstrap implements WebApplicationInitializer
                 null, 20_971_520L, 41_943_040L, 512_000
         ));
         dispatcher.addMapping("/");
+
+        AnnotationConfigWebApplicationContext restContext =
+                new AnnotationConfigWebApplicationContext();
+        restContext.register(RestServletContextConfiguration.class);
+        DispatcherServlet restServlet = new DispatcherServlet(restContext);
+        restServlet.setDispatchOptionsRequest(true);
+        dispatcher = container.addServlet("springRestDispatcher", restServlet);
+        dispatcher.setLoadOnStartup(2);
+        dispatcher.addMapping("/services/Rest/*");
 
         FilterRegistration.Dynamic registration = container.addFilter(
                 "loggingFilter", new LoggingFilter()
