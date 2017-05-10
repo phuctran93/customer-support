@@ -9,7 +9,8 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Customer Support :: <c:out value="${fn:trim(htmlTitle)}" /></title>
+        <title><spring:message code="title.customer.support" /> ::
+            <c:out value="${fn:trim(htmlTitle)}" /></title>
         <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.1/css/bootstrap.min.css" />
         <link rel="stylesheet"
               href="<c:url value="/resource/stylesheet/main.css" />" />
@@ -35,7 +36,7 @@
         <jsp:invoke fragment="headContent" />
     </head>
     <body>
-        <h1>Multinational Widget Corporation</h1>
+        <h1><spring:message code="title.company" /></h1>
         <table border="0" id="bodyTable">
             <tbody>
                 <tr>
