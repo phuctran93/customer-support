@@ -18,4 +18,5 @@ public interface TicketService
     );
     void save(@NotNull(message = "{validate.ticketService.save.ticket}")
               @Valid Ticket ticket);
+    void deleteTicket(long id);
 }

@@ -1,10 +1,12 @@
 package com.wrox.site;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.wrox.validation.NotBlank;
 import javax.validation.Valid;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Ticket
@@ -75,6 +77,7 @@ public class Ticket
         this.dateCreated = dateCreated;
     }
 
+    @JsonIgnore
     public Attachment getAttachment(String name)
     {
         return this.attachments.get(name);
@@ -85,11 +88,19 @@ public class Ticket
         return this.attachments.values();
     }
 
+    @JsonIgnore
     public void addAttachment(Attachment attachment)
     {
         this.attachments.put(attachment.getName(), attachment);
     }
 
+    public void setAttachments(List<Attachment> attachments)
+    {
+        for(Attachment attachment : attachments)
+            this.addAttachment(attachment);
+    }
+
+    @JsonIgnore
     public int getNumberOfAttachments()
     {
         return this.attachments.size();
