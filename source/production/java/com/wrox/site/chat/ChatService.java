@@ -7,7 +7,7 @@ public interface ChatService
     CreateResult createSession(String user);
     JoinResult joinSession(long id, String user);
     ChatMessage leaveSession(ChatSession session, String user,
-                             ReasonForLeaving reason);
+            ReasonForLeaving reason);
     void logMessage(ChatSession session, ChatMessage message);
     List<ChatSession> getPendingSessions();
 

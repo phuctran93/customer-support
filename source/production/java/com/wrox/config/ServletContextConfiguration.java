@@ -15,6 +15,8 @@ import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.oxm.Marshaller;
 import org.springframework.oxm.Unmarshaller;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Validator;
+import org.springframework.validation.beanvalidation.SpringValidatorAdapter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.multipart.support.StandardServletMultipartResolver;
 import org.springframework.web.servlet.LocaleResolver;
@@ -46,6 +48,7 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
     @Inject ObjectMapper objectMapper;
     @Inject Marshaller marshaller;
     @Inject Unmarshaller unmarshaller;
+    @Inject SpringValidatorAdapter validator;
 
     @Override
     public void configureMessageConverters(
@@ -85,6 +88,12 @@ public class ServletContextConfiguration extends WebMvcConfigurerAdapter
                 .useJaf(false).defaultContentType(MediaType.APPLICATION_XML)
                 .mediaType("xml", MediaType.APPLICATION_XML)
                 .mediaType("json", MediaType.APPLICATION_JSON);
+    }
+
+    @Override
+    public Validator getValidator()
+    {
+        return this.validator;
     }
 
     @Override
