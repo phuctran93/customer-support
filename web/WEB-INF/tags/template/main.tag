@@ -29,7 +29,7 @@
                 form.submit();
             };
             var newChat = function() {
-                postInvisibleForm('<c:url value="/chat" />', { action: 'new' });
+                postInvisibleForm('<c:url value="/chat/new" />', { });
             };
         </script>
         <jsp:invoke fragment="headContent" />
