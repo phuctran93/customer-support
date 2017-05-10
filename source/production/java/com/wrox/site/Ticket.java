@@ -1,5 +1,7 @@
 package com.wrox.site;
 
+import com.wrox.validation.NotBlank;
+import javax.validation.Valid;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -9,14 +11,18 @@ public class Ticket
 {
     private long id;
 
+    @NotBlank(message = "{validate.ticket.customerName}")
     private String customerName;
 
+    @NotBlank(message = "{validate.ticket.subject}")
     private String subject;
 
+    @NotBlank(message = "{validate.ticket.body}")
     private String body;
 
     private Instant dateCreated;
 
+    @Valid
     private Map<String, Attachment> attachments = new LinkedHashMap<>();
 
     public long getId()
