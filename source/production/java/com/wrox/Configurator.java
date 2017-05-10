@@ -19,7 +19,7 @@ public class Configurator implements ServletContextListener
         );
         registration.setAsyncSupported(true);
         registration.addMappingForUrlPatterns(
-                null, false, "/tickets", "/sessions"
+                null, false, "/tickets", "/chat", "/sessions"
         );
     }
 
