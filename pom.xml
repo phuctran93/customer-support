@@ -7,7 +7,7 @@
     <name>Customer Support Application</name>
     <groupId>com.wrox</groupId>
     <artifactId>customer-support</artifactId>
-    <version>3.0</version>
+    <version>4.0</version>
     <packaging>war</packaging>
 
     <properties>
@@ -53,6 +53,13 @@
                     <artifactId>jstl-api</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+            <version>3.0.0</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

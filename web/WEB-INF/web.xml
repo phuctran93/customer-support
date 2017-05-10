@@ -27,5 +27,6 @@
         <tracking-mode>COOKIE</tracking-mode>
     </session-config>
 
-    <distributable/>
+    <distributable />
+
 </web-app>
